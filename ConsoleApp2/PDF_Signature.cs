@@ -2,7 +2,6 @@
 {
 
     using System;
-    using System.Collections;
     using System.IO;
     using System.Security.Cryptography;
     using System.Security.Cryptography.Pkcs;
@@ -10,7 +9,6 @@
     using iTextSharp.text.pdf;
     using Org.BouncyCastle.X509;
     using SysX509 = System.Security.Cryptography.X509Certificates;
-    using Org.BouncyCastle.Asn1.Cms;
     using System.Collections.Generic;
 
     /// <summary>
@@ -44,8 +42,6 @@
             objSA.Location = Location;
             objSA.Acro6Layers = true;
 
-            //objSA.Render =  PdfSignatureAppearance.SignatureRender.NameAndDescription;
-            //objSA.SignatureRenderingMode = PdfSignatureAppearance.RenderingMode.NAME_AND_DESCRIPTION;//Render =  PdfSignatureAppearance.SignatureRender.NameAndDescription;
             PdfSignature objSignature = new PdfSignature(PdfName.ADOBE_PPKMS, PdfName.ADBE_PKCS7_SHA1);
             objSignature.Date = new PdfDate(objSA.SignDate);
             string nombre= iTextSharp.text.pdf.security.CertificateInfo.GetSubjectFields(objChain[0]).GetField("CN");
@@ -56,19 +52,12 @@
                 objSignature.Location = objSA.Location;
             objSA.CryptoDictionary = objSignature;
             int intCSize = 4000;
-            //Hashtable objTable = new Hashtable();
             Dictionary<PdfName, int> objTable = new Dictionary<PdfName, int>();
             objTable[PdfName.CONTENTS] = intCSize * 2 + 2;
-            //objTable[PdfName.NAME] = intCSize * 2 + 2;
-            //objTable[PdfName.NAME] = iTextSharp.text.pdf.security.CertificateInfo.GetSubjectFields(objChain[0]).GetField("CN")
-
-            //objTable.
-            //objSA.PreClose(objTable);
             objSA.PreClose(objTable);
 
             HashAlgorithm objSHA1 = new SHA1CryptoServiceProvider();
 
-            //Stream objStream = objSA.RangeStream;
             Stream objStream = objSA.GetRangeStream();
             int intRead = 0;
             byte[] bytBuffer = new byte[8192];
